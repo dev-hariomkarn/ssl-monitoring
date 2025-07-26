@@ -115,8 +115,6 @@ import ProtectedRoute from "@/redux/ProtectedRoute";
 
 export default function UserDashboard() {
   return (
-    <ProtectedRoute>
-      <div>User dashboard content here</div>
-    </ProtectedRoute>
+    <div>User dashboard content here</div>
   );
 }
