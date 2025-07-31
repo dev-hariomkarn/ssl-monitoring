@@ -45,23 +45,37 @@ export const sendThankYouMail = async (payload: any) => {
 export const sendMail = async (payload: any) => {
     try {
         const transporter = nodemailer.createTransport({
-            host: "smtp-relay.brevo.com",
+            host: process.env.SMTP_SERVICE,
             port: 587,
             secure: false,
             auth: {
-                user: "93128f001@smtp-brevo.com",
-                pass: "xFGOzLJbaPrvsjfS"
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASSWORD
             }
         });
+        const handlebarOptions: any = {
+            viewEngine: {
+                extName: '.handlebars',
+                partialsDir: path.resolve('public/templates'),
+                defaultLayout: false,
+            },
+            viewPath: path.resolve('public/templates'),
+            extName: '.handlebars',
+        };
+
+        transporter.use('compile', hbs(handlebarOptions));
+
         const mailOptions = {
-            from: `SSL Monitoring <hariomkarn@outlook.com>`,
+            from: `"SSL Monitoring" <hariomkarn@outlook.com>`, // must be verified in Brevo
             to: payload?.to,
             subject: payload?.title,
-            text: payload?.text || "Hello World!", // optional plain text
-            html: payload?.html || "<h2>Welcome!</h2>", // use custom HTML from payload
+            template: payload.template,
+            context: {
+                name: payload?.data?.name,
+            },
         };
+
         const mailRes = await transporter.sendMail(mailOptions);
-        console.log('mailRes', mailRes)
         return mailRes;
 
     } catch (error) {

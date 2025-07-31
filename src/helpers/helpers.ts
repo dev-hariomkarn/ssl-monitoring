@@ -4,6 +4,7 @@ import { compareSync, hashSync } from "bcryptjs";
 import path from "path";
 import fs, { unlinkSync } from "fs";
 import CryptoJS from "crypto-js";
+import { decode } from "jsonwebtoken";
 
 export const handleFileUpload = async (file: any, host: string) => {
     if (file) {
@@ -101,4 +102,8 @@ export const createPassword = async (name: string, number: string) => {
     const newName = fn.charAt(0).toUpperCase() + fn.slice(1);
     const phone = number.slice(-4);
     return `${newName}@${phone}`;
+};
+
+export const jwtDecode = async (token: string) => {
+  return decode(token);
 };

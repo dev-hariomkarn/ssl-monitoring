@@ -10,6 +10,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useDispatch } from "react-redux"
+import { register } from "../_redux/authApi"
+import { useRouter } from "next/navigation"
 
 const validationSchema = Yup.object({
   name: Yup.string().min(2, "Name must be at least 2 characters").required("Name is required"),
@@ -29,6 +32,8 @@ const validationSchema = Yup.object({
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const dispatch = useDispatch()
+  const router = useRouter()
 
   const formik = useFormik({
     initialValues: {
@@ -38,9 +43,16 @@ export default function SignupPage() {
       confirmPassword: "",
     },
     validationSchema,
-    onSubmit: (values) => {
-      console.log("Signup form submitted:", values)
-      // Handle signup logic here
+    onSubmit: async (values) => {
+      const data = {
+        name: values.name,
+        email: values.email,
+        password: values.password
+      }
+      const res = await dispatch(register(data))
+      if (res.success) {
+        router.push("/login")
+      }
     },
   })
 
@@ -48,7 +60,7 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Create Account</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center text-green-600 ">Create Account</CardTitle>
           <CardDescription className="text-center">Enter your information to create a new account</CardDescription>
         </CardHeader>
         <CardContent>
@@ -143,14 +155,14 @@ export default function SignupPage() {
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={formik.isSubmitting}>
+            <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 cursor-pointer" disabled={formik.isSubmitting}>
               {formik.isSubmitting ? "Creating account..." : "Create Account"}
             </Button>
           </form>
 
           <div className="mt-6 text-center text-sm">
             {"Already have an account? "}
-            <Link href="/login" className="text-blue-600 hover:text-blue-500 underline">
+            <Link href="/login" className="text-green-600 font-bold">
               Log in
             </Link>
           </div>

@@ -1,8 +1,9 @@
-// 'use client';
+'use client';
 // import { useEffect, useState } from 'react';
 // import { useRouter } from 'next/navigation';
 
 import ProtectedRoute from "@/redux/ProtectedRoute";
+import { shallowEqual, useSelector } from "react-redux";
 
 // export default function UserDashboardPage() {
 //   const [domainInput, setDomainInput] = useState('');
@@ -114,6 +115,10 @@ import ProtectedRoute from "@/redux/ProtectedRoute";
 
 
 export default function UserDashboard() {
+  const {isLoading} = useSelector((state: any) => state.auth, shallowEqual)
+  if(!isLoading){
+    return <h3>Loading...</h3>
+  }
   return (
     <div>User dashboard content here</div>
   );

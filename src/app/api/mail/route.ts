@@ -1,11 +1,12 @@
 import { sendMail } from "@/helpers/mail";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
 
     const payload = {
-        to: "karnhariom122@gmail.com",
-        title: "Test Mail",
+        to: "rcsldev@gmail.com",
+        title: "Welness Nine | OTP",
+        template: "test"
     }
 
     await sendMail(payload)

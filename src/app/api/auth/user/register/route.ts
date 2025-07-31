@@ -14,8 +14,8 @@ export const POST = async (req: NextRequest) => {
         if (user) {
             return NextResponse.json({
                 message: "User already exists!",
-                status: 400
-            })
+                success: false
+            }, { status: 400 })
         }
 
         const username: string = await generateUsername(email)
@@ -34,7 +34,9 @@ export const POST = async (req: NextRequest) => {
         const payload = {
             to: email,
             title: "Confirm Your Email",
-            data: `${process.env.MAIN}`,
+            data: {
+                name: name
+            },
             template: "confirm-email"
         };
 
@@ -48,8 +50,8 @@ export const POST = async (req: NextRequest) => {
 
     } catch (error: any) {
         return NextResponse.json({
-            status: 500,
-            message: error.message
-        })
+            message: error.message,
+            success: false
+        }, {status: 500})
     }
 }

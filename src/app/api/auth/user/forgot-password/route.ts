@@ -14,8 +14,8 @@ export const POST = async (request: NextRequest) => {
         if (!user) {
             return NextResponse.json({
                 message: "User not found",
-                status: 400,
-            });
+                success: false
+            }, { status: 400 });
         }
         const passwordResetToken = await randomToken();
 
@@ -34,15 +34,15 @@ export const POST = async (request: NextRequest) => {
 
         return NextResponse.json({
             message: "Reset link sent Successfully",
-            status: 200,
             token: passwordResetToken,
-        });
+            success: true
+        }, { status: 200 });
 
     } catch (error: any) {
         console.log('error', error)
         return NextResponse.json({
             message: error.message,
-            status: 500,
-        });
+            success: false
+        }, { status: 500, });
     }
 };

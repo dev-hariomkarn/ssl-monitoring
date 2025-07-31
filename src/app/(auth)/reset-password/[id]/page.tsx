@@ -71,7 +71,7 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Reset Password</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center text-green-600 ">Reset Password</CardTitle>
           <CardDescription className="text-center">Enter your new password below</CardDescription>
         </CardHeader>
         <CardContent>
@@ -138,13 +138,13 @@ export default function ResetPasswordPage() {
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={formik.isSubmitting}>
+            <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 cursor-pointer" disabled={formik.isSubmitting}>
               {formik.isSubmitting ? "Resetting..." : "Reset Password"}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
-            <Link href="/login" className="text-sm text-blue-600 hover:text-blue-500 underline">
+            <Link href="/login" className="text-sm text-green-600 font-bold">
               Back to Log In
             </Link>
           </div>

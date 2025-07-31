@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useDispatch } from "react-redux"
+import { forgotPassword } from "../_redux/authApi"
 
 const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email address").required("Email is required"),
@@ -17,6 +19,7 @@ const validationSchema = Yup.object({
 
 export default function ForgotPasswordPage() {
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const dispatch = useDispatch()
 
   const formik = useFormik({
     initialValues: {
@@ -24,11 +27,13 @@ export default function ForgotPasswordPage() {
     },
     validationSchema,
     onSubmit: async (values) => {
-      console.log("Forgot password form submitted:", values)
-      // Handle forgot password logic here
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      setIsSubmitted(true)
+      const data = {
+        email: values.email
+      }
+      const res = await dispatch(forgotPassword(data))
+      if(res?.payload?.success){
+        setIsSubmitted(true)
+      }
     },
   })
 
@@ -70,7 +75,7 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Forgot Password</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center text-green-600 ">Forgot Password</CardTitle>
           <CardDescription className="text-center">
             Enter your email address and we'll send you a link to reset your password
           </CardDescription>
@@ -91,13 +96,13 @@ export default function ForgotPasswordPage() {
               )}
             </div>
 
-            <Button type="submit" className="w-full" disabled={formik.isSubmitting}>
+            <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 cursor-pointer" disabled={formik.isSubmitting}>
               {formik.isSubmitting ? "Sending..." : "Send Reset Link"}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
-            <Link href="/login" className="text-sm text-blue-600 hover:text-blue-500 underline">
+            <Link href="/login" className="text-sm text-green-600 font-bold">
               <ArrowLeft className="mr-1 h-3 w-3 inline" />
               Back to Sign In
             </Link>

@@ -28,16 +28,6 @@ export const createToken = async (payload: Object) => {
   ).toString();
 };
 
-export const deleteToken = async (token: String) => {
-  try {
-    Token.deleteMany({ tokenable_id: token }).then((data) => {
-      if (!data) {
-        throw "Data not found";
-      } else {
-        return true;
-      }
-    });
-  } catch (err) {
-
-  }
+export const deleteToken = async (token: string) => {
+  await Token.deleteMany({ tokenableId: token });
 };
