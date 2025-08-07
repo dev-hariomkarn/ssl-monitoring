@@ -26,11 +26,14 @@ export const POST = async (request: NextRequest) => {
         const payload = {
             to: user?.email,
             title: "Forgot Password",
-            data: `${process.env.MAIN}${passwordResetToken}`,
+            data: {
+                resetLink: `${process.env.MAIN}reset-password/${passwordResetToken}`,
+                name: user.name
+            },
             template: "forgot-password"
         };
 
-        // await sendMail(payload);
+        await sendMail(payload);
 
         return NextResponse.json({
             message: "Reset link sent Successfully",

@@ -10,6 +10,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useDispatch } from "react-redux"
+import { resetPassword } from "../../_redux/authApi"
+import { useParams, useRouter } from "next/navigation"
 
 const validationSchema = Yup.object({
   password: Yup.string()
@@ -28,6 +31,9 @@ export default function ResetPasswordPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isReset, setIsReset] = useState(false)
+  const dispatch = useDispatch()
+  const path = useParams()
+  const router = useRouter()
 
   const formik = useFormik({
     initialValues: {
@@ -36,11 +42,15 @@ export default function ResetPasswordPage() {
     },
     validationSchema,
     onSubmit: async (values) => {
-      console.log("Reset password form submitted:", values)
-      // Handle reset password logic here
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      setIsReset(true)
+      const data = {
+        password: values.password,
+        verifyToken: path.id
+      }
+      const res = await dispatch(resetPassword(data))
+      if (res?.payload?.success) {
+        setIsReset(true)
+        router.push("/login")
+      }
     },
   })
 

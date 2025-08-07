@@ -1,6 +1,6 @@
 import { connectToDB } from '@/lib/mongo';
 import User from '@/models/User';
-import Domain from '@/models/Domain';
+import Domain from '@/models/domain';
 import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import { NextRequest, NextResponse } from 'next/server';

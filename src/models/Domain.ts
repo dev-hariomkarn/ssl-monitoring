@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { model, models } from 'mongoose';
 
 const DomainSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

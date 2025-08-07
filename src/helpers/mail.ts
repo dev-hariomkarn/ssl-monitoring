@@ -66,16 +66,18 @@ export const sendMail = async (payload: any) => {
         transporter.use('compile', hbs(handlebarOptions));
 
         const mailOptions = {
-            from: `"SSL Monitoring" <hariomkarn@outlook.com>`, // must be verified in Brevo
+            from: `"SSL Monitoring" <karnhariom@gmail.com>`,
             to: payload?.to,
             subject: payload?.title,
             template: payload.template,
             context: {
-                name: payload?.data?.name,
+                data: payload?.data,
             },
         };
+        console.log('payload', payload)
 
         const mailRes = await transporter.sendMail(mailOptions);
+        console.log('mailRes', mailRes)
         return mailRes;
 
     } catch (error) {

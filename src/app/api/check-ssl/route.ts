@@ -1,6 +1,6 @@
 // app/api/check-ssl/route.js
 import { connectToDB } from '@/lib/mongo';
-import Domain from '@/models/Domain';
+import Domain from '@/models/domain';
 import jwt from 'jsonwebtoken';
 import { NextRequest, NextResponse } from 'next/server';
 import tls from 'tls';

@@ -130,10 +130,10 @@ export const resetPassword: any = createAsyncThunk(
             console.log('response: ', response);
             if (response.status === 200) {
                 toast.success(response?.data?.message);
-                return response?.data?.status;
+                return response?.data;
             } else {
                 toast.error(response?.data?.message);
-                return response?.data?.status;
+                return response?.data;
             }
         } catch (error) {
             return rejectWithValue();

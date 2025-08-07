@@ -4,10 +4,12 @@ import { login, userLogout } from "./authApi";
 const authSlice = createSlice({
   name: "auth",
   initialState: {
-    isLoading: false,
+    isLoading: true,
     token: null,
-    role: null,   
+    role: null,
     email: null,
+    name: null,
+    profileImage: null,
   },
   reducers: {
     isLoadingToggle: (state, action) => {
@@ -17,6 +19,8 @@ const authSlice = createSlice({
       state.token = null;
       state.role = null;
       state.email = null;
+      state.name = null;
+      state.profileImage = null;
     },
   },
   extraReducers: (builder) => {
@@ -26,8 +30,10 @@ const authSlice = createSlice({
     builder.addCase(login.fulfilled, (state, action) => {
       state.isLoading = false;
       state.token = action?.payload?.token;
-      state.role = action?.payload?.role || null;  // <-- set role
-      state.email = action?.payload?.email || null; // <-- optional
+      state.role = action?.payload?.role || null;
+      state.email = action?.payload?.email || null;
+      state.name = action?.payload?.name || null;
+      state.profileImage = action?.payload?.profileImage || null;
     });
     builder.addCase(login.rejected, (state) => {
       state.isLoading = false;
@@ -41,6 +47,8 @@ const authSlice = createSlice({
       state.token = null;
       state.role = null;
       state.email = null;
+      state.name = null;
+      state.profileImage = null;
     });
     builder.addCase(userLogout.rejected, (state) => {
       state.isLoading = false;
@@ -53,7 +61,7 @@ export const selectUserRole = (state: any) => state.auth.role;
 export const selectUserEmail = (state: any) => state.auth.email;
 
 export const {
-    isLoadingToggle,
-    defaultLogout,
+  isLoadingToggle,
+  defaultLogout,
 } = authSlice.actions;
 export default authSlice.reducer;

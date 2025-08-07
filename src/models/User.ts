@@ -11,10 +11,17 @@ const userSchema = new mongoose.Schema({
         required: [true, "Username is required"],
         unique: [true, "Username not available"]
     },
+    profileImage: {
+        type: String,
+    },
     email: {
         type: String,
         required: [true, "Email is required"],
         unique: [true, "Email already in use"]
+    },
+    phone: {
+        type: String,
+        isVerified: { type: Boolean, default: false, required: true },
     },
     password: {
         type: String,
@@ -32,7 +39,7 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         enum: [
-            "user", "admin" , "superAdmin"
+            "user", "admin", "superAdmin"
         ],
         default: "user",
         required: true,

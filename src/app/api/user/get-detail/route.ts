@@ -29,6 +29,7 @@ export async function GET(req: CustomNextRequest, res: NextResponse) {
             name: user.name,
             username: user.username,
             email: user.email,
+            phone: user.phone,
             is_verified: user.is_verified,   
         }
         return NextResponse.json({

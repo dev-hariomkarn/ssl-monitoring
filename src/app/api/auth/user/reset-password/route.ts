@@ -12,16 +12,16 @@ export const POST = async (request: CustomNextRequest) => {
         const user: any = await User.findOne({ passwordVerifyToken: verifyToken })
         if (!user) {
             return NextResponse.json({
-                message: "User not found",
-                status: 400
-            });
+                message: "User not found or Reset link expired",
+                success: false
+            },{status: 400});
         }
         const isAble = await minutes(user.updatedAt) <= 10
         if (user && !isAble) {
             return NextResponse.json({
                 message: "Reset token expired",
-                status: 400
-            });
+                success: false
+            },{status: 400});
         }
 
         const newPassword = await hashPassword(password);
@@ -32,8 +32,9 @@ export const POST = async (request: CustomNextRequest) => {
         await user.save()
 
         return NextResponse.json({
-            message: "Password reset successfull"
-        });
+            message: "Password reset successfull",
+            success: true
+        }, {status: 200});
     } catch (error: any) {
         return NextResponse.json({
             message: error.message,

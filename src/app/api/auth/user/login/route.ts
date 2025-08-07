@@ -38,6 +38,8 @@ export async function POST(request: NextRequest) {
             token,
             role: user.role,
             email: user.email,
+            name: user.name,
+            profileImage: user.profileImage,
             message: "Logged in successfully",
             success: true
         }, { status: 200 });

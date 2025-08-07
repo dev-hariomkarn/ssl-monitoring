@@ -1,125 +1,46 @@
 'use client';
-// import { useEffect, useState } from 'react';
-// import { useRouter } from 'next/navigation';
 
-import ProtectedRoute from "@/redux/ProtectedRoute";
-import { shallowEqual, useSelector } from "react-redux";
-
-// export default function UserDashboardPage() {
-//   const [domainInput, setDomainInput] = useState('');
-//   const [domains, setDomains]: any = useState([]);
-//   const [loading, setLoading] = useState(false);
-//   const [sendingEmail, setSendingEmail] = useState(false);
-//   const router = useRouter();
-
-//   useEffect(() => {
-//     const token = localStorage.getItem('token');
-//     if (!token) router.push('/login');
-//     else fetchDomains(token);
-//   }, []);
-
-//   const fetchDomains = async (token: any) => {
-//     const res = await fetch('/api/user-domains', {
-//       headers: { Authorization: `Bearer ${token}` },
-//     });
-//     const data = await res.json();
-//     if (Array.isArray(data)) setDomains(data);
-//   };
-
-//   const handleAddDomain = async () => {
-//     const token = localStorage.getItem('token');
-//     if (!domainInput || !token) return;
-//     setLoading(true);
-//     const res = await fetch('/api/check-ssl', {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         Authorization: `Bearer ${token}`,
-//       },
-//       body: JSON.stringify({ domain: domainInput }),
-//     });
-//     const newData = await res.json();
-//     setDomains([...domains, newData]);
-//     setDomainInput('');
-//     setLoading(false);
-//   };
-
-//   const handleSendEmail = async () => {
-//     const token = localStorage.getItem('token');
-//     if (!token) return;
-//     setSendingEmail(true);
-//     const res = await fetch('/api/send-alerts', {
-//       method: 'POST',
-//       headers: { Authorization: `Bearer ${token}` },
-//     });
-//     const data = await res.json();
-//     alert(data.message || data.error);
-//     setSendingEmail(false);
-//   };
-
-//   return (
-//     <div className="p-8 max-w-4xl mx-auto">
-//       <h1 className="text-xl font-bold mb-4">Dashboard</h1>
-//       <div className="flex gap-2 mb-6">
-//         <input
-//           value={domainInput}
-//           onChange={(e) => setDomainInput(e.target.value)}
-//           placeholder="Enter domain"
-//           className="border px-3 py-2 w-full rounded"
-//         />
-//         <button onClick={handleAddDomain} className="bg-blue-600 text-white px-4 py-2 rounded" disabled={loading}>
-//           {loading ? 'Checking...' : 'Add Domain'}
-//         </button>
-//         <button
-//           onClick={handleSendEmail}
-//           className="bg-green-600 text-white px-4 py-2 rounded"
-//           disabled={sendingEmail}
-//         >
-//           {sendingEmail ? 'Sending...' : 'Send Email'}
-//         </button>
-//       </div>
-//       <table className="w-full border text-sm">
-//         <thead className="bg-blue-500 text-white">
-//           <tr>
-//             <th className="px-2 py-2">Domain</th>
-//             <th>Issue</th>
-//             <th>Expiry</th>
-//             <th>Days Left</th>
-//             <th>Status</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {domains.map((d: any, i: any) => (
-//             <tr key={i} className="border-t">
-//               <td className="px-2 py-1">{d.domain}</td>
-//               <td>{d.issueDate}</td>
-//               <td>{d.expiryDate}</td>
-//               <td>{d.daysLeft}</td>
-//               <td className={
-//                 d.status === 'OK'
-//                   ? 'text-green-600'
-//                   : d.status === 'Expiring soon'
-//                   ? 'text-yellow-600'
-//                   : 'text-red-600'
-//               }>
-//                 {d.status}
-//               </td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// }
-
-
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function UserDashboard() {
-  const {isLoading} = useSelector((state: any) => state.auth, shallowEqual)
-  if(!isLoading){
-    return <h3>Loading...</h3>
-  }
   return (
-    <div>User dashboard content here</div>
+    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>Total Domains</CardDescription>
+            <CardTitle className="text-4xl">12</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-xs text-muted-foreground">+2 from last month</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>Active Subscriptions</CardDescription>
+            <CardTitle className="text-4xl">3</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-xs text-muted-foreground">All subscriptions active</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardDescription>Security Score</CardDescription>
+            <CardTitle className="text-4xl">98%</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-xs text-muted-foreground">Excellent security status</div>
+          </CardContent>
+        </Card>
+      </div>
+      <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min p-4">
+        <h2 className="text-2xl font-bold mb-4">Welcome to your Dashboard</h2>
+        <p className="text-muted-foreground">
+          Select an option from the sidebar to get started. You can manage your domains, account details,
+          subscriptions, and security settings from here.
+        </p>
+      </div>
+    </div>
   );
 }

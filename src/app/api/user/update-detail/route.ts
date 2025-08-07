@@ -14,7 +14,7 @@ export async function PUT(req: CustomNextRequest, res: NextResponse) {
 
     try {
         const reqBody = await req.json();
-        const { name, email } = reqBody;
+        const { name, email, phone } = reqBody;
 
         const user = await User.findOne({
             _id: new mongoose.Types.ObjectId(req.id),
@@ -40,6 +40,7 @@ export async function PUT(req: CustomNextRequest, res: NextResponse) {
         }
         user.name = name || user.name;
         user.email = email || user.email;
+        user.phone = phone || user.phone;
 
         await user.save();
 

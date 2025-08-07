@@ -1,7 +1,7 @@
 // app/api/user-domains/route.js
 import { connectToDB } from '@/lib/mongo';
 import jwt from 'jsonwebtoken';
-import Domain from '@/models/Domain';
+import Domain from '@/models/domain';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
