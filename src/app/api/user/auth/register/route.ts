@@ -9,7 +9,7 @@ export const POST = async (req: NextRequest) => {
     try {
         const reqBody = await req.json()
         const { name, email, password } = reqBody
-        const user = await User.findOne({ email })
+        const user = await User.findOne({ 'email.value': email.toLowerCase() });
 
         if (user) {
             return NextResponse.json({
@@ -25,7 +25,10 @@ export const POST = async (req: NextRequest) => {
         const newUser = new User({
             username,
             name,
-            email,
+            email: {
+                value: email,
+                isVerified: false
+            },
             password: hashedPassword
         })
 
@@ -52,6 +55,6 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.json({
             message: error.message,
             success: false
-        }, {status: 500})
+        }, { status: 500 })
     }
 }

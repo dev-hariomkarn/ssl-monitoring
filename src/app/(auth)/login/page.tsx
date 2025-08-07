@@ -25,7 +25,6 @@ export default function LoginPage() {
   const router = useRouter()
   const ClientId = process.env.NEXT_PUBLIC_GOOGLE_CID!
 
-
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -51,13 +50,11 @@ export default function LoginPage() {
         const data = {
           credential: credentialResponse.credential,
         }
-        console.log('data', data)
 
         const res = await dispatch(googleLogin(data))
-        console.log('res', res)
-        // if (!res.error) {
-        //   router.push("/user-dashboard")
-        // }
+        if (!res.error) {
+          router.push("/user-dashboard")
+        }
       }
     } catch (error) {
       console.error("Google login error:", error)

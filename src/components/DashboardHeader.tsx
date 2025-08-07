@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Settings, LogOut, User } from "lucide-react"
+import { Settings, LogOut, User, CircleCheck, CircleAlert } from "lucide-react"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 
 export function DashboardHeader() {
@@ -51,7 +51,16 @@ export function DashboardHeader() {
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">{userData.name}</p>
-                  <p className="text-xs leading-none text-muted-foreground">{userData.email}</p>
+                  <div className="text-xs leading-none text-muted-foreground flex gap-1 align-middle">
+                    <p> {userData?.email?.value}</p>
+                    {
+                      userData?.email?.isVerified ?
+                        <span title="Verified">
+                          <CircleCheck size={18} fill="green" color="white" />
+                        </span> :
+                        <span title="Email not verified"> <CircleAlert size={18} fill="red" color="white" /></span>
+                    }
+                  </div>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />

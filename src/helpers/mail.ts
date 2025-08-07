@@ -77,11 +77,9 @@ export const sendMail = async (payload: any) => {
         console.log('payload', payload)
 
         const mailRes = await transporter.sendMail(mailOptions);
-        console.log('mailRes', mailRes)
         return mailRes;
 
     } catch (error) {
-        console.log('error', error)
         return;
     }
 };

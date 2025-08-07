@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { login, userLogout } from "./authApi";
+import { getDetail, login, userLogout } from "./authApi";
 
 const authSlice = createSlice({
   name: "auth",
@@ -9,6 +9,7 @@ const authSlice = createSlice({
     role: null,
     email: null,
     name: null,
+    phone: null,
     profileImage: null,
   },
   reducers: {
@@ -19,11 +20,13 @@ const authSlice = createSlice({
       state.token = null;
       state.role = null;
       state.email = null;
+      state.phone = null;
       state.name = null;
       state.profileImage = null;
     },
   },
   extraReducers: (builder) => {
+    // login 
     builder.addCase(login.pending, (state) => {
       state.isLoading = true;
     });
@@ -32,6 +35,7 @@ const authSlice = createSlice({
       state.token = action?.payload?.token;
       state.role = action?.payload?.role || null;
       state.email = action?.payload?.email || null;
+      state.phone = action?.payload?.phone || null;
       state.name = action?.payload?.name || null;
       state.profileImage = action?.payload?.profileImage || null;
     });
@@ -39,6 +43,25 @@ const authSlice = createSlice({
       state.isLoading = false;
     });
 
+    // getdetail 
+
+    builder.addCase(getDetail.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getDetail.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.role = action?.payload?.role || null;
+      state.email = action?.payload?.email || null;
+      state.phone = action?.payload?.phone || null;
+      state.name = action?.payload?.name || null;
+      state.profileImage = action?.payload?.profileImage || null;
+    });
+    builder.addCase(getDetail.rejected, (state) => {
+      state.isLoading = false;
+    });
+
+
+    // logout 
     builder.addCase(userLogout.pending, (state) => {
       state.isLoading = true;
     });
@@ -55,10 +78,6 @@ const authSlice = createSlice({
     });
   },
 });
-
-export const selectIsAuthenticated = (state: any) => !!state.auth.token;
-export const selectUserRole = (state: any) => state.auth.role;
-export const selectUserEmail = (state: any) => state.auth.email;
 
 export const {
   isLoadingToggle,

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
 import { Button } from "@/components/ui/button"
@@ -17,9 +17,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { AlertTriangle, Phone, Mail, User, Trash2 } from "lucide-react"
+import { AlertTriangle, Mail, User, Trash2, CircleCheck, CircleAlert, Phone } from "lucide-react"
 import PhoneInput from "react-phone-number-input"
 import "react-phone-number-input/style.css"
+import { shallowEqual, useDispatch, useSelector } from "react-redux"
+import { updateDetail } from "../_redux/userApi"
+import { toast } from "react-toastify"
 
 // Validation Schemas
 const accountInfoSchema = Yup.object({
@@ -34,30 +37,33 @@ const contactInfoSchema = Yup.object({
   phoneNumber: Yup.string().required("Phone number is required").min(10, "Phone number must be at least 10 digits"),
 })
 
+const deleteAccountSchema = Yup.object({
+  confirmText: Yup.string().oneOf(["DELETE"], "Please type DELETE to confirm").required("Confirmation is required"),
+})
+
 const otpSchema = Yup.object({
   otpCode: Yup.string()
     .matches(/^\d{6}$/, "OTP must be exactly 6 digits")
     .required("OTP code is required"),
 })
 
-const deleteAccountSchema = Yup.object({
-  confirmText: Yup.string().oneOf(["DELETE"], "Please type DELETE to confirm").required("Confirmation is required"),
-})
-
 export default function AccountDetailsPage() {
-  const [showOtpDialog, setShowOtpDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const userData = useSelector((state: any) => state.auth, shallowEqual)
+  const dispatch = useDispatch()
+  const [showOtpDialog, setShowOtpDialog] = useState(false)
   const [pendingPhoneNumber, setPendingPhoneNumber] = useState("")
   const [otpSent, setOtpSent] = useState(false)
+  const [otpType, setOtpType] = useState("")
 
   // Initial values
   const initialAccountInfo = {
-    fullName: "John Doe",
+    fullName: userData.name || "",
   }
 
   const initialContactInfo = {
-    email: "john.doe@example.com",
-    phoneNumber: "+1234567890",
+    email: userData?.email?.value || "",
+    phoneNumber: userData?.phone?.value || "",
   }
 
   const initialOtp = {
@@ -69,70 +75,28 @@ export default function AccountDetailsPage() {
   }
 
   const handleAccountInfoSubmit = async (values: typeof initialAccountInfo, { setSubmitting }: any) => {
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      console.log("Account info updated:", values)
-      // Show success message
-    } catch (error) {
-      console.error("Error updating account info:", error)
-    } finally {
-      setSubmitting(false)
+    const data = {
+      name: values.fullName,
+      email: userData?.email?.value,
+      phone: userData?.phone?.value || ""
     }
+    await dispatch(updateDetail(data))
   }
 
   const handleContactInfoSubmit = async (values: typeof initialContactInfo, { setSubmitting }: any) => {
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      console.log("Contact info updated:", values)
-      // Show success message
-    } catch (error) {
-      console.error("Error updating contact info:", error)
-    } finally {
-      setSubmitting(false)
+    const data = {
+      name: userData.name,
+      email: values.email,
+      phone: values.phoneNumber
     }
-  }
-
-  const handleGetOtp = async (phoneNumber: string) => {
-    try {
-      setPendingPhoneNumber(phoneNumber)
-      setShowOtpDialog(true)
-      // Simulate sending OTP
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      setOtpSent(true)
-      console.log("OTP sent to:", phoneNumber)
-    } catch (error) {
-      console.error("Error sending OTP:", error)
-    }
-  }
-
-  const handleOtpSubmit = async (values: typeof initialOtp, { setSubmitting, resetForm }: any) => {
-    try {
-      // Simulate OTP verification
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      console.log("OTP verified:", values.otpCode)
-      console.log("Phone number updated to:", pendingPhoneNumber)
-
-      setShowOtpDialog(false)
-      setOtpSent(false)
-      setPendingPhoneNumber("")
-      resetForm()
-      // Show success message
-    } catch (error) {
-      console.error("Error verifying OTP:", error)
-    } finally {
-      setSubmitting(false)
-    }
+    await dispatch(updateDetail(data))
   }
 
   const handleDeleteAccount = async (values: typeof initialDeleteAccount, { setSubmitting }: any) => {
     try {
-      // Simulate account deletion
       await new Promise((resolve) => setTimeout(resolve, 2000))
-      console.log("Account deleted")
+      toast.success("Account Deleted")
       setShowDeleteDialog(false)
-      // Redirect to login or show confirmation
     } catch (error) {
       console.error("Error deleting account:", error)
     } finally {
@@ -148,6 +112,37 @@ export default function AccountDetailsPage() {
       // Show success message
     } catch (error) {
       console.error("Error resending OTP:", error)
+    }
+  }
+
+  const handleOtpSubmit = async (values: typeof initialOtp, { setSubmitting, resetForm }: any) => {
+    try {
+      // Simulate OTP verification
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      setShowOtpDialog(false)
+      setOtpSent(false)
+      setPendingPhoneNumber("")
+      resetForm()
+      // Show success message
+    } catch (error) {
+      console.error("Error verifying OTP:", error)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const handleGetOtp = async (value: string, type: string) => {
+    try {
+      setOtpType(type)
+      setPendingPhoneNumber(value)
+      setShowOtpDialog(true)
+      // Simulate sending OTP
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      setOtpSent(true)
+      console.log("OTP sent to:", value)
+    } catch (error) {
+      setOtpType("")
+      console.error("Error sending OTP:", error)
     }
   }
 
@@ -222,45 +217,74 @@ export default function AccountDetailsPage() {
                   <div className="grid gap-6 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
-                      <Field name="email">
-                        {({ field }: any) => (
-                          <Input
-                            {...field}
-                            id="email"
-                            type="email"
-                            placeholder="Enter your email"
-                            className={errors.email && touched.email ? "border-destructive" : ""}
-                          />
-                        )}
-                      </Field>
+                      <div className="relative">
+                        <Field name="email">
+                          {({ field }: any) => (
+                            <Input
+                              {...field}
+                              id="email"
+                              type="email"
+                              placeholder="Enter your email"
+                              className={errors.email && touched.email ? "border-destructive" : ""}
+                            />
+                          )}
+                        </Field>
+                        <div
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                        >
+                          {
+                            userData?.email?.isVerified ?
+                              <span title="Verified">
+                                <CircleCheck size={18} fill="green" color="white" />
+                              </span> :
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-full px-3 py-2 hover:bg-transparent cursor-pointer"
+                                onClick={() => handleGetOtp(values.email, "email")}
+                              >
+                                Verify
+                              </Button>
+                          }
+                        </div>
+                      </div>
                       <ErrorMessage name="email" component="p" className="text-sm text-destructive" />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="phoneNumber">Phone Number</Label>
                       <div className="space-y-2">
-                        <div className="phone-input-container">
+                        <div className="phone-input-container relative">
                           <PhoneInput
                             international
                             countryCallingCodeEditable={false}
-                            defaultCountry="US"
+                            defaultCountry="IN"
                             value={values.phoneNumber}
                             onChange={(value) => setFieldValue("phoneNumber", value || "")}
-                            className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
-                              errors.phoneNumber && touched.phoneNumber ? "border-destructive" : ""
-                            }`}
+                            className={`flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${errors.phoneNumber && touched.phoneNumber ? "border-destructive" : ""
+                              }`}
                           />
+                          <div
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          >
+                            {
+                              userData?.phone?.isVerified ?
+                                <span title="Verified">
+                                  <CircleCheck size={18} fill="green" color="white" />
+                                </span> :
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-full px-3 py-2 hover:bg-transparent cursor-pointer"
+                                  onClick={() => handleGetOtp(values.phoneNumber, "phone")}
+                                >
+                                  Verify
+                                </Button>
+                            }
+                          </div>
                         </div>
                         <ErrorMessage name="phoneNumber" component="p" className="text-sm text-destructive" />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleGetOtp(values.phoneNumber)}
-                          disabled={!values.phoneNumber || (errors.phoneNumber && touched.phoneNumber) ? true : false}
-                          className="w-full sm:w-auto"
-                        >
-                          Get OTP
-                        </Button>
                       </div>
                     </div>
                   </div>
@@ -272,6 +296,70 @@ export default function AccountDetailsPage() {
             </Formik>
           </CardContent>
         </Card>
+
+        {/* OTP Verification Dialog */}
+        <Dialog open={showOtpDialog} onOpenChange={setShowOtpDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                {
+                  otpType === "phone" ?
+                    <>
+                      <Phone className="h-5 w-5" />
+                      Verify Phone Number
+                    </> :
+                    <>
+                      <Mail className="h-5 w-5" />
+                      Verify Email Address
+                    </>
+                }
+              </DialogTitle>
+              <DialogDescription>
+                We've sent a verification code to {pendingPhoneNumber}. Please enter the code below.
+              </DialogDescription>
+            </DialogHeader>
+            <Formik initialValues={initialOtp} validationSchema={otpSchema} onSubmit={handleOtpSubmit}>
+              {({ isSubmitting, errors, touched, values }) => (
+                <Form className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="otpCode">Verification Code</Label>
+                    <Field name="otpCode">
+                      {({ field }: any) => (
+                        <Input
+                          {...field}
+                          id="otpCode"
+                          placeholder="Enter 6-digit code"
+                          maxLength={6}
+                          className={errors.otpCode && touched.otpCode ? "border-destructive" : ""}
+                        />
+                      )}
+                    </Field>
+                    <ErrorMessage name="otpCode" component="p" className="text-sm text-destructive" />
+                  </div>
+                  <Button type="button" variant="outline" onClick={handleResendOtp} className="w-full bg-transparent">
+                    Resend code
+                  </Button>
+                  <DialogFooter>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setShowOtpDialog(false)
+                        setOtpSent(false)
+                        setPendingPhoneNumber("")
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button type="submit" disabled={isSubmitting || !values.otpCode || values.otpCode.length !== 6}>
+                      {isSubmitting ? "Verifying..." : "Verify"}
+                    </Button>
+                  </DialogFooter>
+                </Form>
+              )}
+            </Formik>
+          </DialogContent>
+        </Dialog>
 
         <Separator />
 
@@ -299,61 +387,6 @@ export default function AccountDetailsPage() {
           </CardContent>
         </Card>
       </div>
-
-      {/* OTP Verification Dialog */}
-      <Dialog open={showOtpDialog} onOpenChange={setShowOtpDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Phone className="h-5 w-5" />
-              Verify Phone Number
-            </DialogTitle>
-            <DialogDescription>
-              We've sent a verification code to {pendingPhoneNumber}. Please enter the code below.
-            </DialogDescription>
-          </DialogHeader>
-          <Formik initialValues={initialOtp} validationSchema={otpSchema} onSubmit={handleOtpSubmit}>
-            {({ isSubmitting, errors, touched, values }) => (
-              <Form className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="otpCode">Verification Code</Label>
-                  <Field name="otpCode">
-                    {({ field }: any) => (
-                      <Input
-                        {...field}
-                        id="otpCode"
-                        placeholder="Enter 6-digit code"
-                        maxLength={6}
-                        className={errors.otpCode && touched.otpCode ? "border-destructive" : ""}
-                      />
-                    )}
-                  </Field>
-                  <ErrorMessage name="otpCode" component="p" className="text-sm text-destructive" />
-                </div>
-                <Button type="button" variant="outline" onClick={handleResendOtp} className="w-full bg-transparent">
-                  Resend code
-                </Button>
-                <DialogFooter>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setShowOtpDialog(false)
-                      setOtpSent(false)
-                      setPendingPhoneNumber("")
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button type="submit" disabled={isSubmitting || !values.otpCode || values.otpCode.length !== 6}>
-                    {isSubmitting ? "Verifying..." : "Verify"}
-                  </Button>
-                </DialogFooter>
-              </Form>
-            )}
-          </Formik>
-        </DialogContent>
-      </Dialog>
 
       {/* Delete Account Confirmation Dialog */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>

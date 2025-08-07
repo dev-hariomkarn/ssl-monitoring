@@ -21,9 +21,6 @@ const PublicFooter = () => {
                     <Link href="/support" className="text-xs hover:underline underline-offset-4 text-gray-600">
                         Support
                     </Link>
-                    <Link href="/api" className="text-xs hover:underline underline-offset-4 text-gray-600">
-                        API Docs
-                    </Link>
                 </nav>
             </div>
         </footer>

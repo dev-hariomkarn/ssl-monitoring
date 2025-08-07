@@ -11,16 +11,16 @@ const PublicHeader = () => {
                 <span className="ml-2 text-xl font-bold text-gray-900">SSLGuard</span>
             </Link>
             <nav className="ml-auto flex gap-4 sm:gap-6">
-                <Link href="#features" className="text-sm font-medium hover:text-green-600 transition-colors">
+                {/* <Link href="#features" className="text-sm font-medium hover:text-green-600 transition-colors">
                     Features
-                </Link>
-                <Link href="#pricing" className="text-sm font-medium hover:text-green-600 transition-colors">
+                </Link> */}
+                <Link href="/pricing" className="text-sm font-medium hover:text-green-600 transition-colors">
                     Pricing
                 </Link>
-                <Link href="#about" className="text-sm font-medium hover:text-green-600 transition-colors">
+                <Link href="/about" className="text-sm font-medium hover:text-green-600 transition-colors">
                     About
                 </Link>
-                <Link href="#contact" className="text-sm font-medium hover:text-green-600 transition-colors">
+                <Link href="/contact-us" className="text-sm font-medium hover:text-green-600 transition-colors">
                     Contact
                 </Link>
             </nav>

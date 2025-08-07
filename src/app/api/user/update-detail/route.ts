@@ -39,17 +39,18 @@ export async function PUT(req: CustomNextRequest, res: NextResponse) {
             }
         }
         user.name = name || user.name;
-        user.email = email || user.email;
-        user.phone = phone || user.phone;
+        user.email.value = email || user.email.value;
+        user.phone.value = phone || user.phone.value;
 
         await user.save();
 
-         const userData = {
+        const userData = {
             id: user._id,
             name: user.name,
             username: user.username,
             email: user.email,
-            is_verified: user.is_verified,   
+            phone: user.phone,
+            isVerified: user.isVerified,
         }
 
         return NextResponse.json({

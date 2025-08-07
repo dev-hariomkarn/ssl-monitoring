@@ -9,8 +9,7 @@ export async function POST(request: NextRequest) {
     try {
         const reqBody = await request.json();
         const { email, password } = reqBody;
-
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ 'email.value': email.toLowerCase() });
         if (!user) {
             return NextResponse.json({
                 message: "User not found",

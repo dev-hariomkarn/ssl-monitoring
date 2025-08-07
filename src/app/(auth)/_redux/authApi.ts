@@ -10,7 +10,7 @@ export const register: any = createAsyncThunk(
             dispatch(isLoadingToggle(true));
             const response = await axios({
                 method: "POST",
-                url: `/api/auth/user/register`,
+                url: `/api/user/auth/register`,
                 data: data,
                 headers: {
                     "Content-Type": "application/json",
@@ -39,7 +39,7 @@ export const login: any = createAsyncThunk(
             dispatch(isLoadingToggle(true));
             const response = await axios({
                 method: "POST",
-                url: `/api/auth/user/login`,
+                url: `/api/user/auth/login`,
                 data: data,
                 headers: {
                     "Content-Type": "application/json",
@@ -69,7 +69,7 @@ export const userLogout: any = createAsyncThunk(
         try {
             const response = await axios({
                 method: "POST",
-                url: `/api/auth/user/logout`,
+                url: `/api/user/auth/logout`,
             });
             console.log(response)
 
@@ -93,7 +93,7 @@ export const forgotPassword: any = createAsyncThunk(
             dispatch(isLoadingToggle(true));
             const response = await axios({
                 method: "POST",
-                url: `/api/auth/user/forgot-password`,
+                url: `/api/user/auth/forgot-password`,
                 data: data,
                 headers: {
                     "Content-Type": "application/json",
@@ -121,7 +121,7 @@ export const resetPassword: any = createAsyncThunk(
         try {
             const response = await axios({
                 method: "POST",
-                url: `/api/auth/user/reset-password`,
+                url: `/api/user/auth/reset-password`,
                 data,
                 headers: {
                     "Content-Type": "application/json",
@@ -147,7 +147,7 @@ export const googleLogin: any = createAsyncThunk(
         try {
             const response = await axios({
                 method: "POST",
-                url: `/api/auth/user/google-login`,
+                url: `/api/user/auth/google-login`,
                 data: data,
                 headers: {
                     "Content-Type": "application/json",
@@ -161,6 +161,27 @@ export const googleLogin: any = createAsyncThunk(
                 return rejectWithValue();
             }
         } catch (err) {
+            return rejectWithValue();
+        }
+    }
+);
+
+export const getDetail: any = createAsyncThunk(
+    "auth/get-detail",
+    async (data, { rejectWithValue, fulfillWithValue, dispatch }: any) => {
+        try {
+            const response = await axios({
+                method: "GET",
+                url: `/api/user/get-detail`,
+            });
+            console.log('response', response)
+            if (response.status === 200) {
+                return fulfillWithValue(response?.data?.userData);
+            } else {
+                return rejectWithValue();
+            }
+        } catch (err: any) {
+            toast.error("Server Error");
             return rejectWithValue();
         }
     }

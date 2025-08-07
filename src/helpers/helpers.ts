@@ -105,5 +105,12 @@ export const createPassword = async (name: string, number: string) => {
 };
 
 export const jwtDecode = async (token: string) => {
-  return decode(token);
+    return decode(token);
+};
+
+export const randomNumber = async () => {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    const num = 100000 + (array[0] % 900000);
+    return num;
 };

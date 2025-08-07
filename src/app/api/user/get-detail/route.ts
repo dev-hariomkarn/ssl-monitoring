@@ -30,7 +30,7 @@ export async function GET(req: CustomNextRequest, res: NextResponse) {
             username: user.username,
             email: user.email,
             phone: user.phone,
-            is_verified: user.is_verified,   
+            isVerified: user.isVerified,   
         }
         return NextResponse.json({
             message: "User successfully retrieved",
