@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
             token,
             role: user.role,
             email: user.email,
+            phone: user.phone,
             name: user.name,
             profileImage: user.profileImage,
             message: "Logged in successfully",

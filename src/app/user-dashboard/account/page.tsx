@@ -21,7 +21,7 @@ import { AlertTriangle, Mail, User, Trash2, CircleCheck, CircleAlert, Phone } fr
 import PhoneInput from "react-phone-number-input"
 import "react-phone-number-input/style.css"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { updateDetail } from "../_redux/userApi"
+import { getOtp, updateDetail, verifyOtp } from "../_redux/userApi"
 import { toast } from "react-toastify"
 
 // Validation Schemas
@@ -118,12 +118,17 @@ export default function AccountDetailsPage() {
   const handleOtpSubmit = async (values: typeof initialOtp, { setSubmitting, resetForm }: any) => {
     try {
       // Simulate OTP verification
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const data ={
+        otp: values.otpCode,
+        email: pendingPhoneNumber,
+        phone: pendingPhoneNumber,
+        type: otpType
+      }
+      await dispatch(verifyOtp(data))
       setShowOtpDialog(false)
       setOtpSent(false)
       setPendingPhoneNumber("")
       resetForm()
-      // Show success message
     } catch (error) {
       console.error("Error verifying OTP:", error)
     } finally {
@@ -133,13 +138,17 @@ export default function AccountDetailsPage() {
 
   const handleGetOtp = async (value: string, type: string) => {
     try {
+      const data = {
+        type: type,
+        email: value,
+        phone: value
+      }
+      console.log('data', data)
       setOtpType(type)
       setPendingPhoneNumber(value)
       setShowOtpDialog(true)
-      // Simulate sending OTP
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await dispatch(getOtp(data))
       setOtpSent(true)
-      console.log("OTP sent to:", value)
     } catch (error) {
       setOtpType("")
       console.error("Error sending OTP:", error)

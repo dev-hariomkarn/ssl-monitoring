@@ -1,13 +1,40 @@
 import { minutes } from "@/helpers/helpers"
 import { connectToDB } from "@/lib/mongo"
+import { checkAuthUser } from "@/middleware/checkAuthUser"
 import OTP from "@/models/otp"
-import { NextRequest, NextResponse } from "next/server"
+import User from "@/models/User"
+import { CustomNextRequest } from "@/types/types"
+import mongoose from "mongoose"
+import { NextResponse } from "next/server"
 
-export const POST = async (request: NextRequest) => {
+export const POST = async (request: CustomNextRequest, response: NextResponse) => {
     await connectToDB()
+    const userResponse: any = await checkAuthUser(request, response);
+    if (userResponse.status !== 200) {
+        return userResponse;
+    }
     try {
         const reqBody = await request.json();
         const { email, otp } = reqBody;
+        const user = await User.findOne({
+            _id: new mongoose.Types.ObjectId(request.id),
+            role: "user",
+            isDeleted: false,
+        })
+        if (!user) {
+            return NextResponse.json({
+                success: false,
+                message: "User not found",
+                status: 404
+            });
+        }
+        if (user.email?.isVerified) {
+            return NextResponse.json({
+                success: false,
+                message: "Email already verified",
+                status: 404
+            });
+        }
         const data = await OTP.findOne({ email })
         if (!data) {
             return NextResponse.json({
@@ -29,6 +56,13 @@ export const POST = async (request: NextRequest) => {
                 success: false
             }, { status: 400, });
         }
+        await User.findOneAndUpdate(
+            { _id: request.id, "email.value": user.email.value },
+            {
+                "email.isVerified": true,
+            },
+            { new: true }
+        )
         await OTP.findOneAndDelete({ email: email })
         return NextResponse.json({
             message: "Code verified successfully",

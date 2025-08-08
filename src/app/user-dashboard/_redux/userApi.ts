@@ -15,10 +15,62 @@ export const updateDetail: any = createAsyncThunk(
                     "Content-Type": "application/json",
                 },
             });
-            console.log('response', response)
             if (response.status === 200) {
                 dispatch(getDetail());
                 toast.success(response?.data?.message);
+                return fulfillWithValue(response?.data);
+            } else {
+                toast.error(response?.data?.message);
+                return rejectWithValue();
+            }
+        } catch (error) {
+            toast.error("Server Error");
+            return rejectWithValue();
+        }
+    }
+)
+
+
+export const getOtp: any = createAsyncThunk(
+    "user/get-otp",
+    async (data: any, { rejectWithValue, fulfillWithValue, dispatch }: any) => {
+        try {
+            const response = await axios({
+                method: "POST",
+                url: `/api/public/send-otp/${data?.type}`,
+                data: data,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (response.status === 200) {
+                return fulfillWithValue(response?.data);
+            } else {
+                toast.error(response?.data?.message);
+                return rejectWithValue();
+            }
+        } catch (error) {
+            toast.error("Server Error");
+            return rejectWithValue();
+        }
+    }
+)
+
+export const verifyOtp: any = createAsyncThunk(
+    "user/verify-otp",
+    async (data: any, { rejectWithValue, fulfillWithValue, dispatch }: any) => {
+        try {
+            const response = await axios({
+                method: "POST",
+                url: `/api/user/verify-otp/${data.type}`,
+                data: data,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (response.status === 200) {
+                dispatch(getDetail())
+                toast.success(response?.data?.message)
                 return fulfillWithValue(response?.data);
             } else {
                 toast.error(response?.data?.message);

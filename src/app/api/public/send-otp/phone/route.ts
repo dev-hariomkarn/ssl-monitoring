@@ -1,5 +1,4 @@
 import { randomNumber } from "@/helpers/helpers";
-import { sendMail } from "@/helpers/mail";
 import { connectToDB } from "@/lib/mongo"
 import OTP from "@/models/otp";
 import User from "@/models/User";
@@ -9,8 +8,8 @@ export const POST = async (request: NextRequest) => {
     await connectToDB()
     try {
         const reqBody = await request.json();
-        const { email } = reqBody;
-        const user = await User.findOne({ "email.value": email })
+        const { phone } = reqBody;
+        const user = await User.findOne({ "phone.value": phone })
         if (!user) {
             return NextResponse.json({
                 success: false,
@@ -19,27 +18,16 @@ export const POST = async (request: NextRequest) => {
         }
         const data: any = await OTP.findOneAndUpdate(
             {
-                email: email,
+                phone: phone,
             },
             {
-                email: email,
+                phone: phone,
                 otp: await randomNumber(),
             },
             { new: true, upsert: true }
         );
 
         if (data) {
-            const mailPayload = {
-                to: data.email,
-                title: "OTP",
-                template: "otp",
-                data: {
-                    otp: data?.otp,
-                    name: user.name,
-                    validMin: "5"
-                },
-            };
-            await sendMail(mailPayload)
             return NextResponse.json({
                 message: "Otp sent successfully",
                 success: true,

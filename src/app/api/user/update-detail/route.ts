@@ -38,6 +38,15 @@ export async function PUT(req: CustomNextRequest, res: NextResponse) {
                 });
             }
         }
+
+        if (email !== user.email.value) {
+            user.email.isVerified = false
+        }
+
+        if (phone !== user.phone.value) {
+            user.phone.isVerified = false
+        }
+
         user.name = name || user.name;
         user.email.value = email || user.email.value;
         user.phone.value = phone || user.phone.value;
