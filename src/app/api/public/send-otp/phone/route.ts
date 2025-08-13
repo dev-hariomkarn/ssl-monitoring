@@ -1,4 +1,5 @@
 import { randomNumber } from "@/helpers/helpers";
+import { sendSms } from "@/helpers/mail";
 import { connectToDB } from "@/lib/mongo"
 import OTP from "@/models/otp";
 import User from "@/models/User";
@@ -26,6 +27,13 @@ export const POST = async (request: NextRequest) => {
             },
             { new: true, upsert: true }
         );
+
+        const payload = {
+            to: phone,
+            body: data.otp
+        }
+
+        await sendSms(payload)
 
         if (data) {
             return NextResponse.json({

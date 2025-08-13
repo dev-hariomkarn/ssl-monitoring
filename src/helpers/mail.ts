@@ -1,3 +1,4 @@
+import twilio from 'twilio';
 import nodemailer from 'nodemailer';
 import hbs from 'nodemailer-express-handlebars';
 import path from 'path';
@@ -82,4 +83,18 @@ export const sendMail = async (payload: any) => {
     } catch (error) {
         return;
     }
+};
+
+const accountSid = process.env.TWILIO_ACCOUNT_SID!;
+const authToken = process.env.TWILIO_AUTH_TOKEN!;
+const client = twilio(accountSid, authToken);
+
+export const sendSms = async (payload: any) => {
+    const message = await client.messages.create({
+        body: payload.body,
+        from: process.env.TWILIO_PHONE_NUMBER,
+        to: payload.to
+    });
+    console.log('message', message)
+    console.log('SMS sent:', message.sid);
 };

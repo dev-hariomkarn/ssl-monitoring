@@ -30,7 +30,6 @@ export const updateDetail: any = createAsyncThunk(
     }
 )
 
-
 export const getOtp: any = createAsyncThunk(
     "user/get-otp",
     async (data: any, { rejectWithValue, fulfillWithValue, dispatch }: any) => {
@@ -71,6 +70,32 @@ export const verifyOtp: any = createAsyncThunk(
             if (response.status === 200) {
                 dispatch(getDetail())
                 toast.success(response?.data?.message)
+                return fulfillWithValue(response?.data);
+            } else {
+                toast.error(response?.data?.message);
+                return rejectWithValue();
+            }
+        } catch (error) {
+            toast.error("Server Error");
+            return rejectWithValue();
+        }
+    }
+)
+
+export const changePassword: any = createAsyncThunk(
+    "user/change-password",
+    async (data, { rejectWithValue, fulfillWithValue, dispatch }: any) => {
+        try {
+            const response = await axios({
+                method: "POST",
+                url: `/api/user/auth/change-password`,
+                data: data,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (response.status === 200) {
+                toast.success(response?.data?.message);
                 return fulfillWithValue(response?.data);
             } else {
                 toast.error(response?.data?.message);

@@ -251,7 +251,7 @@ export default function AccountDetailsPage() {
                                 variant="ghost"
                                 size="icon"
                                 className="h-full px-3 py-2 hover:bg-transparent cursor-pointer"
-                                onClick={() => handleGetOtp(values.email, "email")}
+                                onClick={() => handleGetOtp(values.email, "mail")}
                               >
                                 Verify
                               </Button>
