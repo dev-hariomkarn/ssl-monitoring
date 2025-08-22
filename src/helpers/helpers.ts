@@ -5,6 +5,8 @@ import path from "path";
 import fs, { unlinkSync } from "fs";
 import CryptoJS from "crypto-js";
 import { decode } from "jsonwebtoken";
+import tls from 'tls';
+
 
 export const handleFileUpload = async (file: any, host: string) => {
     if (file) {
@@ -114,3 +116,22 @@ export const randomNumber = async () => {
     const num = 100000 + (array[0] % 900000);
     return num;
 };
+
+export const checkSSL = async (domain: string) => {
+    const cert: any = await new Promise((resolve, reject) => {
+        const socket = tls.connect({ host: domain, port: 443, servername: domain, rejectUnauthorized: false }, () => {
+            const cert = socket.getPeerCertificate();
+            socket.end();
+            resolve(cert);
+        });
+        socket.on('error', reject);
+    });
+
+    const issueDate = new Date(cert.valid_from).toISOString().split('T')[0];
+    const expiryDate = new Date(cert.valid_to).toISOString().split('T')[0];
+    const daysLeft = Math.floor((new Date(expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    const status = daysLeft <= 0 ? 'Expired' : daysLeft <= 7 ? 'Expiring soon' : 'OK';
+
+    const data = { issueDate, expiryDate, daysLeft, status };
+    return data;
+}

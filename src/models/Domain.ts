@@ -1,12 +1,15 @@
 import mongoose, { model, models } from 'mongoose';
 
 const DomainSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  domain: String,
-  issueDate: String,
-  expiryDate: String,
-  daysLeft: Number,
-  status: String,
+  users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }],
+  domain: { type: String, required: true, unique: true },
+  issueDate: { type: Date, required: true },
+  expiryDate: { type: Date, required: true },
+  daysLeft: { type: Number, required: true },
+  status: { type: String, enum: ['OK', 'Expiring soon', 'Expired'], required: true },
+}, {
+  timestamps: true
 });
 
-export default mongoose.models.Domain || mongoose.model('Domain', DomainSchema);
+const Domain = models.Domain || model("Domain", DomainSchema)
+export default Domain;
