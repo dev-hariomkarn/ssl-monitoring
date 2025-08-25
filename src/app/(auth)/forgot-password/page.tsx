@@ -28,7 +28,8 @@ export default function ForgotPasswordPage() {
     validationSchema,
     onSubmit: async (values) => {
       const data = {
-        email: values.email
+        email: values.email,
+        role: "user"
       }
       const res = await dispatch(forgotPassword(data))
       if(res?.payload?.success){

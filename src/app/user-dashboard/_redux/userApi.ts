@@ -16,7 +16,10 @@ export const updateDetail: any = createAsyncThunk(
                 },
             });
             if (response.status === 200) {
-                dispatch(getDetail());
+                const data = {
+                    role: "user"
+                }
+                dispatch(getDetail(data));
                 toast.success(response?.data?.message);
                 return fulfillWithValue(response?.data);
             } else {
@@ -68,7 +71,10 @@ export const verifyOtp: any = createAsyncThunk(
                 },
             });
             if (response.status === 200) {
-                dispatch(getDetail())
+                const data = {
+                    role: "user"    
+                }
+                dispatch(getDetail(data))
                 toast.success(response?.data?.message)
                 return fulfillWithValue(response?.data);
             } else {

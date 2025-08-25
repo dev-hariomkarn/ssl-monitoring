@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Settings, LogOut, User, CircleCheck, CircleAlert } from "lucide-react"
+import Link from "next/link"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 
 export function DashboardHeader() {
@@ -20,6 +21,9 @@ export function DashboardHeader() {
   const dispatch = useDispatch()
 
   const handleLogout = async () => {
+    const data={
+      role: "user"
+    }
     const res = await dispatch(userLogout())
   }
   return (
@@ -66,15 +70,15 @@ export function DashboardHeader() {
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <User className="mr-2 h-4 w-4" />
-                <a href="/user-dashboard/account">
+                <Link href="/user-dashboard/account">
                   <span>Profile</span>
-                </a>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Settings className="mr-2 h-4 w-4" />
-                <a href="/user-dashboard/subscription">
+                <Link href="/user-dashboard/subscription">
                   <span>Settings</span>
-                </a>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>

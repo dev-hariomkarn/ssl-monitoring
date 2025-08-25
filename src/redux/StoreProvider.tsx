@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import { Provider, useSelector } from "react-redux";
+import { Provider, shallowEqual, useSelector } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { usePathname, useRouter } from "next/navigation";
 import axios from "axios";
@@ -25,8 +25,10 @@ export default function StoreProvider({ children }: { children: React.ReactNode 
 function AuthHandler({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const router = useRouter();
-    const auth = useSelector((state: RootState) => state.auth);
+    const auth = useSelector((state: RootState) => state.auth, shallowEqual);
+    console.log('auth', auth)
     const { isLoading, role, token } = auth || {};
+    console.log('role', role)
 
     const isAdminPath = () => pathname.startsWith(ADMIN_PREFIX);
     const isUserPath = () => pathname.startsWith(USER_PREFIX);
@@ -35,13 +37,16 @@ function AuthHandler({ children }: { children: React.ReactNode }) {
         if (!token && (isUserPath() || isAdminPath())) {
             router.push("/login")
         }
-        if (token && role && role === "user" && isAdminPath()) {
+
+        if (token && role === "user" && isAdminPath()) {
             router.push("/")
         }
-        if (token && role && role === "admin" && isUserPath()) {
+
+        if (token && (role === "admin" || role === "superAdmin") && isUserPath()) {
             router.push("/")
         }
-    }, [pathname, isLoading, role]);
+    }, [pathname, isLoading, role, token])
+
 
     const redirecting =
         (role === "user" && isAdminPath()) ||

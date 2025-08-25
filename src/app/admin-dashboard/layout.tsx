@@ -1,13 +1,19 @@
-import React from 'react'
+"use client"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { AdminAppSidebar } from "@/components/AdminAppSidebar";
+import { AdminDashboardHeader } from "@/components/AdminDashboardHeader";
 
-const AdminLayout = ({ children }: Readonly<{
-    children: React.ReactNode;
-}>) => {
-    return (
-        <div>
-            {children}
-        </div>
-    )
+export default function AdminDashboard({ children }: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <SidebarProvider>
+      <AdminAppSidebar />
+      <SidebarInset>
+        <AdminDashboardHeader />
+        {children}
+      </SidebarInset>
+    </SidebarProvider>
+  )
 }
 
-export default AdminLayout

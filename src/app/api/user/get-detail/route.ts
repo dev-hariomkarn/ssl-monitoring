@@ -31,6 +31,8 @@ export async function GET(req: CustomNextRequest, res: NextResponse) {
             email: user.email,
             phone: user.phone,
             isVerified: user.isVerified,   
+            role: user.role,
+            profileImage: user.profileImage,
         }
         return NextResponse.json({
             message: "User successfully retrieved",

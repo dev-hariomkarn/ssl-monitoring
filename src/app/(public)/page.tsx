@@ -49,13 +49,12 @@ export default function SSLMonitoringLanding() {
               </div>
               <div className="flex items-center justify-center">
                 <div className="relative">
-                  {/* <Image
-                    src="/placeholder.svg?height=400&width=400"
+                  <Image
+                    src="/images/ssl.webp"
                     width="400"
                     height="400"
                     alt="SSL Monitoring Dashboard"
-                    className="mx-auto aspect-square overflow-hidden rounded-xl object-cover shadow-2xl"
-                  /> */}
+                  />
                   {/* <div className="absolute -top-4 -right-4 bg-green-600 text-white p-2 rounded-full">
                     <Shield className="w-6 h-6" />
                   </div> */}

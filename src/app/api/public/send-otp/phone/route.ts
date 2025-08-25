@@ -33,7 +33,7 @@ export const POST = async (request: NextRequest) => {
             body: data.otp
         }
 
-        await sendSms(payload)
+        // await sendSms(payload)
 
         if (data) {
             return NextResponse.json({

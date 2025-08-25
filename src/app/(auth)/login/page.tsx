@@ -34,9 +34,11 @@ export default function LoginPage() {
     onSubmit: async (values) => {
       const data = {
         email: values.email,
-        password: values.password
+        password: values.password,
+        role: "user"
       }
       const res = await dispatch(login(data))
+      console.log('res', res)
       if (!res.error) {
         router.push("/user-dashboard")
       }
@@ -44,7 +46,6 @@ export default function LoginPage() {
   })
 
   const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
-    console.log('credentialResponse', credentialResponse)
     try {
       if (credentialResponse.credential) {
         const data = {

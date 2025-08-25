@@ -7,6 +7,7 @@ const DomainSchema = new mongoose.Schema({
   expiryDate: { type: Date, required: true },
   daysLeft: { type: Number, required: true },
   status: { type: String, enum: ['OK', 'Expiring soon', 'Expired'], required: true },
+  lastChecked: { type: Date, default: null },
 }, {
   timestamps: true
 });

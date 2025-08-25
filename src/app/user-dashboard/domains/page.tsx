@@ -27,6 +27,7 @@ import { addDomain, deleteDomain, getDomainList } from "../_redux/userApi"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
+import { readableDate } from "@/helpers/helper"
 
 
 interface Domain {
@@ -163,16 +164,6 @@ export default function DomainsPage() {
             setDomains(domainList)
         }
     }, [domainList])
-
-
-    const readableDate = (isoDate: string) => {
-        const date = new Date(isoDate)
-        return date.toLocaleDateString(undefined, {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        })
-    }
 
     const initialState = {
         domainName: "",

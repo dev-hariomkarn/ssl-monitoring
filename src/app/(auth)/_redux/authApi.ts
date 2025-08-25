@@ -33,13 +33,13 @@ export const register: any = createAsyncThunk(
 )
 
 export const login: any = createAsyncThunk(
-    "user/login",
+    "login",
     async (data: any, { rejectWithValue, fulfillWithValue, dispatch }: any) => {
         try {
             dispatch(isLoadingToggle(true));
             const response = await axios({
                 method: "POST",
-                url: `/api/user/auth/login`,
+                url: `/api/${data.role}/auth/login`,
                 data: data,
                 headers: {
                     "Content-Type": "application/json",
@@ -64,12 +64,12 @@ export const login: any = createAsyncThunk(
 );
 
 export const userLogout: any = createAsyncThunk(
-    "user/logout",
+    "logout",
     async (data: any, { rejectWithValue, fulfillWithValue, dispatch }: any) => {
         try {
             const response = await axios({
                 method: "POST",
-                url: `/api/user/auth/logout`,
+                url: `/api/${data.role}/auth/logout`,
             });
             console.log(response)
 
@@ -93,7 +93,7 @@ export const forgotPassword: any = createAsyncThunk(
             dispatch(isLoadingToggle(true));
             const response = await axios({
                 method: "POST",
-                url: `/api/user/auth/forgot-password`,
+                url: `/api/${data.role}/auth/forgot-password`,
                 data: data,
                 headers: {
                     "Content-Type": "application/json",
@@ -121,7 +121,7 @@ export const resetPassword: any = createAsyncThunk(
         try {
             const response = await axios({
                 method: "POST",
-                url: `/api/user/auth/reset-password`,
+                url: `/api/${data.role}/auth/reset-password`,
                 data,
                 headers: {
                     "Content-Type": "application/json",
@@ -168,11 +168,11 @@ export const googleLogin: any = createAsyncThunk(
 
 export const getDetail: any = createAsyncThunk(
     "auth/get-detail",
-    async (data, { rejectWithValue, fulfillWithValue, dispatch }: any) => {
+    async (data: any, { rejectWithValue, fulfillWithValue, dispatch }: any) => {
         try {
             const response = await axios({
                 method: "GET",
-                url: `/api/user/get-detail`,
+                url: `/api/${data.role}/get-detail`,
             });
             console.log('response', response)
             if (response.status === 200) {

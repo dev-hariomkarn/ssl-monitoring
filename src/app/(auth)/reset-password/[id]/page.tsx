@@ -44,7 +44,8 @@ export default function ResetPasswordPage() {
     onSubmit: async (values) => {
       const data = {
         password: values.password,
-        verifyToken: path.id
+        verifyToken: path.id,
+        role: "user"
       }
       const res = await dispatch(resetPassword(data))
       if (res?.payload?.success) {
