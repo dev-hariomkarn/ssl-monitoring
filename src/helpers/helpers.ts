@@ -117,21 +117,59 @@ export const randomNumber = async () => {
     return num;
 };
 
+// export const checkSSL = async (domain: string) => {
+//     const cert: any = await new Promise((resolve, reject) => {
+//         const socket = tls.connect({ host: domain, port: 443, servername: domain, rejectUnauthorized: false }, () => {
+//             const cert = socket.getPeerCertificate();
+//             socket.end();
+//             resolve(cert);
+//         });
+//         socket.on('error', reject);
+//     });
+
+//     const issueDate = new Date(cert.valid_from).toISOString().split('T')[0];
+//     const expiryDate = new Date(cert.valid_to).toISOString().split('T')[0];
+//     const daysLeft = Math.floor((new Date(expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+//     const status = daysLeft <= 0 ? 'Expired' : daysLeft <= 7 ? 'Expiring soon' : 'OK';
+
+//     const data = { issueDate, expiryDate, daysLeft, status };
+//     return data;
+// }
+
 export const checkSSL = async (domain: string) => {
-    const cert: any = await new Promise((resolve, reject) => {
-        const socket = tls.connect({ host: domain, port: 443, servername: domain, rejectUnauthorized: false }, () => {
-            const cert = socket.getPeerCertificate();
-            socket.end();
-            resolve(cert);
+    return new Promise((resolve, reject) => {
+        const socket = tls.connect(
+            { host: domain, port: 443, servername: domain, rejectUnauthorized: false },
+            () => {
+                try {
+                    const cert = socket.getPeerCertificate();
+                    socket.end();
+
+                    if (!cert || !cert.valid_from || !cert.valid_to) {
+                        return reject(new Error("No certificate found"));
+                    }
+
+                    const issueDate = new Date(cert.valid_from).toISOString().split("T")[0];
+                    const expiryDate = new Date(cert.valid_to).toISOString().split("T")[0];
+                    const daysLeft = Math.floor(
+                        (new Date(expiryDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+                    );
+                    const status =
+                        daysLeft <= 0 ? "Expired" : daysLeft <= 7 ? "Expiring soon" : "OK";
+
+                    resolve({ issueDate, expiryDate, daysLeft, status });
+                } catch (err) {
+                    reject(err);
+                }
+            }
+        );
+
+        // Timeout safeguard (5 sec)
+        socket.setTimeout(5000, () => {
+            socket.destroy();
+            reject(new Error("Timeout"));
         });
-        socket.on('error', reject);
+
+        socket.on("error", reject);
     });
-
-    const issueDate = new Date(cert.valid_from).toISOString().split('T')[0];
-    const expiryDate = new Date(cert.valid_to).toISOString().split('T')[0];
-    const daysLeft = Math.floor((new Date(expiryDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-    const status = daysLeft <= 0 ? 'Expired' : daysLeft <= 7 ? 'Expiring soon' : 'OK';
-
-    const data = { issueDate, expiryDate, daysLeft, status };
-    return data;
-}
+};

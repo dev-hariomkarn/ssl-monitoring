@@ -11,7 +11,7 @@ async function refreshAllDomains() {
 
   for (const d of domains) {
     try {
-      const sslData = await checkSSL(d.domain);
+      const sslData: any = await checkSSL(d.domain);
       if (sslData) {
         await Domain.findByIdAndUpdate(d._id, {
           $set: {

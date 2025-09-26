@@ -21,9 +21,10 @@ import {
     CheckCircle,
     XCircle,
     Clock,
+    ArrowUpDown,
 } from "lucide-react"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { addDomain, deleteDomain, getDomainList } from "../_redux/userApi"
+import { addDomain, deleteDomain, getDomainList, refreshDomainSSL } from "../_redux/userApi"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
@@ -39,12 +40,13 @@ interface Domain {
     issueDate: string
 }
 
-type SortOption = "a-z" | "z-a" | "up-first" | "down-first" | "newest-first"
+type SortOption = "a-z" | "z-a" | "days-asc" | "days-desc";
 
 export default function DomainsPage() {
     const [domains, setDomains] = useState<Domain[]>([])
     const [searchTerm, setSearchTerm] = useState("")
-    const [sortBy, setSortBy] = useState<SortOption>("a-z")
+
+    const [sortBy, setSortBy] = useState<SortOption>("days-asc");
     const dispatch = useDispatch()
     const [showOtpDialog, setShowOtpDialog] = useState(false)
 
@@ -96,9 +98,6 @@ export default function DomainsPage() {
             domain.domain.toLowerCase().includes(searchTerm.toLowerCase())
         )
 
-        const statusOrderUp = { OK: 0, "Expiring soon": 1, Expired: 2 }
-        const statusOrderDown = { Expired: 0, "Expiring soon": 1, OK: 2 }
-
         switch (sortBy) {
             case "a-z":
                 filtered.sort((a, b) => a.domain.localeCompare(b.domain))
@@ -106,23 +105,22 @@ export default function DomainsPage() {
             case "z-a":
                 filtered.sort((a, b) => b.domain.localeCompare(a.domain))
                 break
-            case "up-first":
-                filtered.sort((a, b) => (statusOrderUp[a.status] ?? 99) - (statusOrderUp[b.status] ?? 99))
-                break
-            case "down-first":
-                filtered.sort((a, b) => (statusOrderDown[a.status] ?? 99) - (statusOrderDown[b.status] ?? 99))
-                break
-            case "newest-first":
-                filtered.sort((a, b) => new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime())
-                break
+            case "days-asc":
+                filtered.sort((a, b) => a.daysLeft - b.daysLeft);
+                break;
+            case "days-desc":
+                filtered.sort((a, b) => b.daysLeft - a.daysLeft);
+                break;
         }
 
         return filtered
     }, [domains, searchTerm, sortBy])
 
 
-    const handleRefreshDomain = (domainId: string) => {
+    const handleRefreshDomain = async (domainId: string) => {
         console.log("Refreshing domain:", domainId)
+        const res = await dispatch(refreshDomainSSL(domainId))
+        console.log('res', res)
     }
 
     const handleViewDetails = (domainId: string) => {
@@ -142,17 +140,6 @@ export default function DomainsPage() {
             .catch((error: any) => {
                 console.error("Error deleting domain:", error)
             })
-    }
-
-    const getSortLabel = (option: SortOption) => {
-        const labels = {
-            "a-z": "A → Z",
-            "z-a": "Z → A",
-            "up-first": "Up First",
-            "down-first": "Down First",
-            "newest-first": "Newest First",
-        }
-        return labels[option]
     }
 
     useEffect(() => {
@@ -219,23 +206,6 @@ export default function DomainsPage() {
                             />
                         </div>
                     </div>
-                    <div className="sm:w-48">
-                        <Label htmlFor="sort" className="sr-only">
-                            Sort by
-                        </Label>
-                        <Select value={sortBy} onValueChange={(value: SortOption) => setSortBy(value)}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Sort by" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="a-z">A → Z</SelectItem>
-                                <SelectItem value="z-a">Z → A</SelectItem>
-                                <SelectItem value="up-first">Up First</SelectItem>
-                                <SelectItem value="down-first">Down First</SelectItem>
-                                <SelectItem value="newest-first">Newest First</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
                 </div>
             </div>
 
@@ -267,9 +237,18 @@ export default function DomainsPage() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>Domain</TableHead>
+                                        <TableHead>Domain
+                                            <button className="cursor-pointer" onClick={() => setSortBy(sortBy === "a-z" ? "z-a" : "a-z")}>
+                                                <ArrowUpDown className="h-4 w-4 ml-2" />
+                                            </button>
+                                        </TableHead>
                                         <TableHead>Expiry Date</TableHead>
-                                        <TableHead>Days Left</TableHead>
+                                        <TableHead>
+                                            Days Left
+                                            <button className="cursor-pointer" onClick={() => setSortBy(sortBy === "days-asc" ? "days-desc" : "days-asc")}>
+                                                <ArrowUpDown className="h-4 w-4 ml-2" />
+                                            </button>
+                                        </TableHead>
                                         <TableHead>Status</TableHead>
                                         <TableHead className="w-[70px]">Action</TableHead>
                                     </TableRow>

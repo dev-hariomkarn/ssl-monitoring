@@ -72,7 +72,7 @@ export const verifyOtp: any = createAsyncThunk(
             });
             if (response.status === 200) {
                 const data = {
-                    role: "user"    
+                    role: "user"
                 }
                 dispatch(getDetail(data))
                 toast.success(response?.data?.message)
@@ -180,6 +180,32 @@ export const deleteDomain: any = createAsyncThunk(
             if (response.status === 200) {
                 dispatch(getDomainList());
                 toast.success(response?.data?.message);
+                return fulfillWithValue(response?.data);
+            } else {
+                toast.error(response?.data?.message);
+                return rejectWithValue();
+            }
+        } catch (error) {
+            toast.error("Server Error");
+            return rejectWithValue();
+        }
+    }
+)
+
+export const refreshDomainSSL: any = createAsyncThunk(
+    "user/refresh-domain-ssl",
+    async (domainId: string, { rejectWithValue, fulfillWithValue, dispatch }: any) => {
+        try {
+            const response = await axios({
+                method: "POST",
+                url: `/api/user/domain/refresh/${domainId}`,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (response.status === 200) {
+                toast.success(response?.data?.message);
+                await dispatch(getDomainList());
                 return fulfillWithValue(response?.data);
             } else {
                 toast.error(response?.data?.message);
