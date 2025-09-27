@@ -10,7 +10,7 @@ export const POST = async (request: NextRequest) => {
         const reqBody = await request.json();
         const { email } = reqBody;
 
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ 'email.value': email.toLowerCase() });
         if (!user) {
             return NextResponse.json({
                 message: "User not found",

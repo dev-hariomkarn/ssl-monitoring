@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request, { params }: { params: { domainId: string } }) {
     await connectToDB();
     try {
-        const { domainId } = params;
+        const { domainId } = await params;
         const domain = await Domain.findById(domainId);
         if (!domain) {
             return NextResponse.json({
@@ -14,7 +14,7 @@ export async function POST(req: Request, { params }: { params: { domainId: strin
             }, { status: 404 });
         }
         // 1. Fetch fresh SSL details
-        const sslData = await checkSSL(domain.domain);
+        const sslData: any = await checkSSL(domain.domain);
         if (!sslData) {
             return NextResponse.json({
                 message: "SSL certificate not found for the domain",

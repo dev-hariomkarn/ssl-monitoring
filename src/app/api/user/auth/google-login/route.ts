@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
         const googleData: any = await jwtDecode(credential);
         console.log('googleData:', googleData)
 
-        // const user = await User.findOne({ email });
+        // const user = await User.findOne({ 'email.value': email.toLowerCase() });
         // if (!user) {
         //     return NextResponse.json({
         //         message: "User not found",
