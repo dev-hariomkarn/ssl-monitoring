@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
 
 export const POST = async (request: CustomNextRequest, response: NextResponse) => {
     await connectToDB()
-    const adminResponse: any = await checkAuthAdmin(request, response);
+    const adminResponse: any = await checkAuthAdmin(request);
     if (adminResponse.status !== 200) {
         return adminResponse;
     }

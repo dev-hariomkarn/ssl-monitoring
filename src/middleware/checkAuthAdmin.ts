@@ -6,7 +6,7 @@ import Token from '@/models/token';
 import User from '@/models/User';
 import { CustomNextRequest } from '@/types/types';
 
-export const checkAuthAdmin = async (req: CustomNextRequest, res: NextResponse) => {
+export const checkAuthAdmin: any = async (req: CustomNextRequest, res: NextResponse) => {
   try {
     const authHeader = req.headers.get('authorization');
     if (!authHeader) {
